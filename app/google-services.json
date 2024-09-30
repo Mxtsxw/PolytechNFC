@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "141123618423",
+    "project_id": "polytechnfc",
+    "storage_bucket": "polytechnfc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141123618423:android:b4aa0c77c48b6d2c722872",
+        "android_client_info": {
+          "package_name": "com.polytech.polytechnfc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8qTPLcBi8_-44anMbJkot07M9J_Bw_qE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
