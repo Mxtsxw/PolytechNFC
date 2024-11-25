@@ -1,5 +1,7 @@
 package com.polytech.polytechnfc.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,11 +33,10 @@ import com.polytech.polytechnfc.ViewModel.RecordsViewModel
 import com.polytech.polytechnfc.ViewModel.SignOutViewModel
 import com.polytech.polytechnfc.screens.Sign_in.SignInScreen
 import com.polytech.polytechnfc.screens.destinations.CardsScreenDestination
-import com.polytech.polytechnfc.screens.destinations.ClassListScreenDestination
 import com.polytech.polytechnfc.screens.destinations.ReadersScreenDestination
 import com.polytech.polytechnfc.screens.destinations.RolesScreenDestination
+import com.polytech.polytechnfc.screens.destinations.RoomsListScreenDestination
 import com.polytech.polytechnfc.screens.destinations.SignInScreenDestination
-import com.polytech.polytechnfc.service.FirestoreService
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -46,6 +47,7 @@ import java.util.TimeZone
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
 fun HomeScreen(navigator: DestinationsNavigator,
@@ -106,13 +108,6 @@ fun HomeScreen(navigator: DestinationsNavigator,
             }
         }
 
-
-//        HorizontalDivider(
-//        modifier = Modifier.padding(vertical = 16.dp),
-//        thickness = 2.dp,
-//        color = MaterialTheme.colorScheme.primary
-//        )
-
         //Section des cartes
         Text(
             text = "Navigation rapide",
@@ -135,7 +130,7 @@ fun HomeScreen(navigator: DestinationsNavigator,
                     modifier = Modifier.weight(1f).height(100.dp),
                     elevation = CardDefaults.cardElevation(8.dp),
                     onClick = {
-                        navigator.navigate(CardsScreenDestination())
+                        navigator.navigate(RoomsListScreenDestination())
                     }
                 ) {
                     Column(
@@ -155,7 +150,7 @@ fun HomeScreen(navigator: DestinationsNavigator,
                     modifier = Modifier.weight(1f).height(100.dp),
                     elevation = CardDefaults.cardElevation(8.dp),
                     onClick = {
-                        navigator.navigate(ClassListScreenDestination())
+                        navigator.navigate(CardsScreenDestination())
                     }
                 ) {
                     Column(

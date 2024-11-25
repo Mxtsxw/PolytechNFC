@@ -5,6 +5,5 @@ import java.util.Date
 
 data class Record(
     val id: String = "",
-    //val timestamp: Timestamp
     val timestamp: Date
 )

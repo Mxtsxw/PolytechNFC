@@ -20,49 +20,46 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.polytech.polytechnfc.ViewModel.CardsViewModel
+import com.polytech.polytechnfc.ViewModel.RoomsListViewModel
 import com.polytech.polytechnfc.screens.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
-
 @Destination
 @Composable
-fun CardsScreen(
-    navigator: DestinationsNavigator,
-    viewModel: CardsViewModel = koinViewModel()
-) {
-    val badgeIds by viewModel.badgeIdsState.collectAsState(emptyList())
+fun RoomsListScreen(navigator: DestinationsNavigator,
+                    viewModel : RoomsListViewModel = koinViewModel()) {
 
+    val rooms by viewModel.roomsState.collectAsState(emptyList())
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween, // Espacement entre les sections
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Titre
         Text(
-            text = "Liste des badges",
+            text = "Liste des salles",
             style = MaterialTheme.typography.headlineMedium
         )
 
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Liste des badges
+        //Liste des salles
         LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(badgeIds) { badgeId ->
+            items(rooms) { room ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(8.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text(
-                        text = "Badge ID : $badgeId",
+                        text = "Salle : ${room.name}",
                         modifier = Modifier.padding(16.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -81,3 +78,6 @@ fun CardsScreen(
         }
     }
 }
+
+
+

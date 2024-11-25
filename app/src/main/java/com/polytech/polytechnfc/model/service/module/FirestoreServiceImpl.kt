@@ -6,10 +6,11 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.snap
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.polytech.polytechnfc.service.FirestoreService
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import com.polytech.polytechnfc.model.Record
+import com.polytech.polytechnfc.model.Role
+import com.polytech.polytechnfc.model.Room
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -19,6 +20,9 @@ import java.util.Date
 class FirestoreServiceImpl : FirestoreService {
     private val firestore = FirebaseFirestore.getInstance()
     private val recordsCollection = firestore.collection("records")
+    private val badgesCollection = firestore.collection("badges")
+    private val roomsCollection = firestore.collection("rooms")
+    private val rolesCollection = firestore.collection("roles")
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getRecords() : List<Record> {
@@ -50,5 +54,58 @@ class FirestoreServiceImpl : FirestoreService {
 
         }
 
+    }
+
+    override suspend fun getBadgeIds(): List<String> {
+        return try {
+            val snapshot = badgesCollection.get().await()
+            snapshot.documents.mapNotNull { it.id}
+            }
+        catch(e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching badge ids", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getRooms(): List<Room> {
+        return try {
+            val snapshot = roomsCollection.get().await()
+            snapshot.documents.mapNotNull { document ->
+                val name = document.getString("name")
+                if(name != null) {
+                    Room(
+                        id = document.id,
+                        name = name
+                    )
+                } else {
+                    Log.w("FirestoreServiceImpl", "Document ignored, missing name: ${document.id}")
+                    null
+                }
+            }
+        } catch(e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching rooms", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getRoles(): List<Role> {
+        return try {
+            val snapshot = rolesCollection.get().await()
+            snapshot.documents.mapNotNull { document ->
+                val name = document.getString("name")
+                if(name != null) {
+                    Role(
+                        id = document.id,
+                        name = name
+                    )
+                } else {
+                    Log.w("FirestoreServiceImpl", "Document ignored, missing name: ${document.id}")
+                    null
+                }
+            }
+        } catch(e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching roles", e)
+            emptyList()
+        }
     }
 }
