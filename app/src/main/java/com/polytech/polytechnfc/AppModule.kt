@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.polytech.polytechnfc.ViewModel.AccessViewModel
 import com.polytech.polytechnfc.ViewModel.CardsViewModel
+import com.polytech.polytechnfc.ViewModel.ReadersViewModel
 import com.polytech.polytechnfc.ViewModel.SignInViewModel
 import com.polytech.polytechnfc.ViewModel.SignOutViewModel
 import com.polytech.polytechnfc.model.service.FirestoreServiceImpl
@@ -22,7 +23,8 @@ val appModule = module {
     viewModel { SignOutViewModel(get()) }
     viewModel { RecordsViewModel(get()) }
     viewModel { CardsViewModel(get()) }
-    viewModel{RoomsListViewModel(get())}
-    viewModel{ RolesViewModel(get()) }
-    viewModel{ AccessViewModel(get()) }
+    viewModel { RoomsListViewModel(get()) }
+    viewModel { RolesViewModel(get()) }
+    viewModel { AccessViewModel(get()) }
+    viewModel { ReadersViewModel(get()) }
 }

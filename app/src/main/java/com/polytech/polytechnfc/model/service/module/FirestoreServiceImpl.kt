@@ -139,8 +139,15 @@ class FirestoreServiceImpl : FirestoreService {
                 Log.e("FirestoreServiceImpl", "Error adding access", e)
             }
         }
+    }
 
-
-}
-
+    suspend fun getReaderIds(): List<String> {
+        return try {
+            val snapshot = firestore.collection("readers").get().await()
+            snapshot.documents.mapNotNull { it.id }
+        } catch (e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching reader ids", e)
+            emptyList()
+        }
+    }
 }

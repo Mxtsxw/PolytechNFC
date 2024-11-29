@@ -34,8 +34,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @Destination
 @Composable
-fun RolesScreen(navigator: DestinationsNavigator,
-                viewModel: RolesViewModel = koinViewModel()) {
+fun RolesScreen(
+    navigator: DestinationsNavigator,
+    viewModel: RolesViewModel = koinViewModel()
+) {
     val roles by viewModel.rolesState.collectAsState(emptyList())
     Column(
         modifier = Modifier
