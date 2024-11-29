@@ -39,7 +39,7 @@ fun RecordCard(
         shape = RectangleShape,
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White // Set background color to white
+            containerColor = Color(0xFFF3F3F3) // Set background color to white
         )
     ) {
         Box(

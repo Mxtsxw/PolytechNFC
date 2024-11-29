@@ -76,7 +76,7 @@ fun HomeScreen(navigator: DestinationsNavigator,
     Column(
         modifier = Modifier.fillMaxWidth()
             .fillMaxHeight()
-            .background(Color.White),
+            .background(Color(0xFFF3F3F3)),
         verticalArrangement = Arrangement.Center
     )
     {
