@@ -3,19 +3,26 @@ package com.polytech.polytechnfc.screens
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -24,15 +31,20 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.QuerySnapshot
 import com.polytech.polytechnfc.ViewModel.RecordsViewModel
 import com.polytech.polytechnfc.ViewModel.SignOutViewModel
 import com.polytech.polytechnfc.screens.Sign_in.SignInScreen
+import com.polytech.polytechnfc.screens.components.RecordCard
 import com.polytech.polytechnfc.screens.destinations.AccessCreateScreenDestination
 import com.polytech.polytechnfc.screens.destinations.CardsScreenDestination
 import com.polytech.polytechnfc.screens.destinations.ReadersScreenDestination
@@ -54,204 +66,245 @@ import java.util.TimeZone
 @Composable
 fun HomeScreen(navigator: DestinationsNavigator,
                viewModel : SignOutViewModel = koinViewModel(),
-               viewModelFirestore: RecordsViewModel = koinViewModel()
+               viewModelFirestore: RecordsViewModel = koinViewModel(),
+               showTopBar: MutableState<Boolean>
 ) {
+    showTopBar.value = true
+
     val records by viewModelFirestore.recordsState.collectAsState(emptyList())
 
-
     Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color(0xFFF3F3F3)),
         verticalArrangement = Arrangement.Center
     )
     {
-        Text(
-            text = "Bienvenue sur Polytech NFC",
-            style = MaterialTheme.typography.headlineMedium
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        {
+            Text(
+                text = "Historique des accès",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
 
-        Text(
-            text = "Historique des badges scannés",
-            style = MaterialTheme.typography.titleLarge
-        )
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-
+        val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
         //Affichage des données réucpérées de la base de données Firestore
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        LazyColumn(modifier = Modifier
+            .height(screenHeight / 2) // Set height to half of the screen
+            .fillMaxWidth(),          // Make it span the full width
         ) {
-            items(records) { record ->
+            items(records.take(10)) { record ->
                 val formattedDate = SimpleDateFormat(
                     "dd/MM/yyyy HH:mm:ss",
                     Locale.getDefault()
                 ).format(record.timestamp)
 
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                        Text(
-                            text = "ID : ${record.id}",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            text = "Timestamp : $formattedDate",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-
+                RecordCard(
+                    user = "Inconnu",
+                    timestamp = formattedDate,
+                    room = "record.room",
+                    granted = record.granted
+                )
             }
         }
 
-        //Section des cartes
-        Text(
-            text = "Navigation rapide",
-            style = MaterialTheme.typography.titleLarge
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFFECECEC))
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
+        {
+            Text(
+                text = "Naviguer",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(16.dp)
             )
-            {
-                // Card Salles
-                Card(
-                    modifier = Modifier.weight(1f).height(100.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    onClick = {
-                        navigator.navigate(RoomsListScreenDestination())
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, 0.dp)
+                    .background(Color(0xECECEC)),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // First row with "Salles" and "Cartes"
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = "Salles",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        // Card Salles
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(RoomsListScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Salles",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+
+                        // Card Cartes
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(CardsScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Cartes",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
                     }
                 }
 
-                // Card Cartes
-                Card(
-                    modifier = Modifier.weight(1f).height(100.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    onClick = {
-                        navigator.navigate(CardsScreenDestination())
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                // Second row with "Rôles" and "Lecteurs"
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = "Cartes",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        // Card Rôles
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(RolesScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Rôles",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+
+                        // Card Lecteurs
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(ReadersScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Lecteurs",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
                     }
+                }
+
+                // Single card for "Créer un accès"
+                item{
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White // Set background color to white
+                        ),
+                        onClick = {
+                            navigator.navigate(AccessCreateScreenDestination())
+                        }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Créer un accès",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                }
+                item{
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            )
-            {
-                // Card Rôles
-                Card(
-                    modifier = Modifier.weight(1f).height(100.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    onClick = {
-                        navigator.navigate(RolesScreenDestination())
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Rôles",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
 
+        }
 
-                // Card Lecteurs
-                Card(
-                    modifier = Modifier.weight(1f).height(100.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    onClick = {
-                        navigator.navigate(ReadersScreenDestination())
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Lecteurs",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-
-                //Card pour créer un accès
-                Card(
-                    modifier = Modifier.fillMaxWidth().height(100.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    onClick = {
-                        navigator.navigate(AccessCreateScreenDestination())
-                    }
-                ){
-                    Column (
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        Text(
-                            text = "Créer un accès",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-
-                    }
-                }
-
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-
-            //Boutton pour se déconnecter
-            Button(
-                onClick = {
-                    viewModel.signOut()
-                    navigator.navigate(SignInScreenDestination())
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-            {
-                Text("Se déconnecter")
-            }
+//
+//
+//            //Boutton pour se déconnecter
+//            Button(
+//                onClick = {
+//                    viewModel.signOut()
+//                    navigator.navigate(SignInScreenDestination())
+//                },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//            {
+//                Text("Se déconnecter")
+//            }
 
         }
     }

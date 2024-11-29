@@ -12,23 +12,23 @@ import kotlinx.coroutines.launch
 import com.polytech.polytechnfc.model.Record
 
 @RequiresApi(Build.VERSION_CODES.O)
-class RecordsViewModel (
-    private val firestoreService: FirestoreServiceImpl): ViewModel(){
-        private val _recordsState = MutableStateFlow<List<Record>>(emptyList())
-        val recordsState: StateFlow<List<Record>> = _recordsState
+class RecordsViewModel(
+    private val firestoreService: FirestoreServiceImpl
+) : ViewModel() {
+    private val _recordsState = MutableStateFlow<List<Record>>(emptyList())
+    val recordsState: StateFlow<List<Record>> = _recordsState
 
-        init {
-            fetchRecords()
-        }
+    init {
+        fetchRecords()
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun fetchRecords(){
+    private fun fetchRecords() {
         viewModelScope.launch {
             val records = firestoreService.getRecords()
             _recordsState.value = records
         }
 
 
-
-}
+    }
 }

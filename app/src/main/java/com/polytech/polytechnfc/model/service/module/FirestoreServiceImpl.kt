@@ -35,6 +35,7 @@ class FirestoreServiceImpl : FirestoreService {
             val records = snapshot.documents.mapNotNull { document ->
                 val timestamp = document.getTimestamp("timestamp")
                 val uid = document.getString("uid")
+                val granted = document.getBoolean("granted")
                 Log.i("FirestoreServiceImpl", "Timestamp: $timestamp")
                 if (timestamp != null) {
                     val adjustedTimestamp = Date(timestamp.seconds * 1000 + 60 * 60 * 1000)
@@ -42,7 +43,8 @@ class FirestoreServiceImpl : FirestoreService {
                         id = document.id,
                         uid = uid ?: "",
                         //timestamp = Date(timestamp.seconds * 1000)
-                        timestamp = adjustedTimestamp
+                        timestamp = adjustedTimestamp,
+                        granted = granted ?: false,
                     )
 
                 } else {
@@ -114,11 +116,11 @@ class FirestoreServiceImpl : FirestoreService {
         return try {
             val snapshot = rolesCollection.get().await()
             snapshot.documents.mapNotNull { document ->
-                val name = document.getString("name")
-                if (name != null) {
+                val label = document.getString("label")
+                if (label != null) {
                     Role(
                         id = document.id,
-                        name = name
+                        label = label
                     )
                 } else {
                     Log.w("FirestoreServiceImpl", "Document ignored, missing name: ${document.id}")
@@ -139,8 +141,15 @@ class FirestoreServiceImpl : FirestoreService {
                 Log.e("FirestoreServiceImpl", "Error adding access", e)
             }
         }
+    }
 
-
-}
-
+    suspend fun getReaderIds(): List<String> {
+        return try {
+            val snapshot = firestore.collection("readers").get().await()
+            snapshot.documents.mapNotNull { it.id }
+        } catch (e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching reader ids", e)
+            emptyList()
+        }
+    }
 }

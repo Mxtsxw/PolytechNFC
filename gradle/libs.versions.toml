@@ -19,6 +19,7 @@ composeDestination = "1.10.2"
 ksp = "1.9.0-1.0.13"
 animationCoreLint = "1.8.0-alpha06"
 media3CommonKtx = "1.5.0"
+firebaseFirestoreKtx = "25.1.1"
 
 
 [libraries]
@@ -49,6 +50,7 @@ compose-destinations-core = { module = "io.github.raamcosta.compose-destinations
 compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "composeDestination" }
 androidx-animation-core-lint = { group = "androidx.compose.animation", name = "animation-core-lint", version.ref = "animationCoreLint" }
 androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

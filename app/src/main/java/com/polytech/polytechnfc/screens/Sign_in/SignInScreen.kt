@@ -2,8 +2,10 @@ package com.polytech.polytechnfc.screens.Sign_in
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +19,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,99 +51,104 @@ import org.koin.compose.koinInject
 fun SignInScreen(navigator: DestinationsNavigator,
                  viewModel: SignInViewModel = koinViewModel(),
                  snackbarHostState: SnackbarHostState,
-                 snackbarScope: CoroutineScope
+                 snackbarScope: CoroutineScope,
+                 showTopBar: MutableState<Boolean>
 ) {
+    showTopBar.value = false
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     val signInState by viewModel.signinState.collectAsState()
 
-    Column(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        contentAlignment = Alignment.Center // Centers the content in both horizontal and vertical directions
     ) {
-        Text("Connexion à Polytech NFC")
-        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Se connecter",
+                style = MaterialTheme.typography.headlineLarge, // Larger text style
+                color = MaterialTheme.colorScheme.primary // Optional: Adjust color
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        //champs email
-        TextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
+            // Champs email
+            TextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        //champs mot de passe
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Mot de passe") },
-            //password = true pour cacher les caractèresf
-            singleLine = true,
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        painter = painterResource(id = if (passwordVisible) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
-                        contentDescription = if (passwordVisible) "Cacher le mot de passe" else "Afficher le mot de passe"
+            // Champs mot de passe
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Mot de passe") },
+                singleLine = true,
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            painter = painterResource(id = if (passwordVisible) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
+                            contentDescription = if (passwordVisible) "Cacher le mot de passe" else "Afficher le mot de passe"
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Gestion de l'état de connexion
+            when (signInState) {
+                is SignInState.Initial -> {}
+                is SignInState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is SignInState.Success -> {
+                    navigator.navigate(HomeScreenDestination())
+                }
+
+                is SignInState.Error -> {
+                    Text(
+                        text = (signInState as SignInState.Error).message,
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
-
-            },
-
-
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        //Gestion de l'état de connexion
-        when (signInState) {
-            is SignInState.Initial -> {}
-            is SignInState.Loading -> {
-                CircularProgressIndicator()
             }
 
-            is SignInState.Success -> {
-                navigator.navigate(HomeScreenDestination())
-            }
-
-            is SignInState.Error -> {
-                Text(
-                    text = (signInState as SignInState.Error).message,
-                    color = MaterialTheme.colorScheme.error
-                )
-
-            }
-        }
-
-        //Bouton de connexion
-        Button(
-            onClick = {
-                if (email.isEmpty() || password.isEmpty()) {
-                    // Affichez le Snackbar si les champs sont vides
-                    snackbarScope.launch {
-                        snackbarHostState.showSnackbar("Veuillez remplir tous les champs.")
+            // Bouton de connexion
+            Button(
+                onClick = {
+                    if (email.isEmpty() || password.isEmpty()) {
+                        // Affichez le Snackbar si les champs sont vides
+                        snackbarScope.launch {
+                            snackbarHostState.showSnackbar("Veuillez remplir tous les champs.")
+                        }
+                    } else {
+                        viewModel.signIn(email, password)
                     }
-                } else {
-                    viewModel.signIn(email, password)
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Se Connecter")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Se Connecter")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
     }
 
 

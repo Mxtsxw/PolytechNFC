@@ -1,6 +1,7 @@
 package com.polytech.polytechnfc.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.polytech.polytechnfc.ViewModel.RolesViewModel
+import com.polytech.polytechnfc.screens.components.CustomListItemComponent
 import com.polytech.polytechnfc.screens.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -34,63 +36,37 @@ import org.koin.androidx.compose.koinViewModel
 
 @Destination
 @Composable
-fun RolesScreen(navigator: DestinationsNavigator,
-                viewModel: RolesViewModel = koinViewModel()) {
+fun RolesScreen(
+    navigator: DestinationsNavigator,
+    viewModel: RolesViewModel = koinViewModel()
+) {
     val roles by viewModel.rolesState.collectAsState(emptyList())
+
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Liste des Rôles",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.padding(16.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        ){
+            Text(
+                text = "Liste des rôles",
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
 
         //Liste des rôles
         LazyColumn(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(roles) { role ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Rôle : ${role.name}",
-                            modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "Paramètres"
-                            )
-                        }
-                    }
-                }
+                CustomListItemComponent(
+                    title = role.label,
+                )
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { navigator.navigate(HomeScreenDestination) },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Retour")
         }
     }
 }

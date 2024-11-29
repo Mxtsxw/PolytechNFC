@@ -6,5 +6,8 @@ import java.util.Date
 data class Record(
     val id: String = "",
     val uid: String = "",
-    val timestamp: Date
+    val timestamp: Date,
+    val granted: Boolean = false,
+    val user: String? = null,
+    val room: Room? = null
 )

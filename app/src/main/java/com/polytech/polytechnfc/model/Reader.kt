@@ -1,6 +1,6 @@
 package com.polytech.polytechnfc.model
 
-data class Role(
+data class Reader(
     val id: String = "",
-    val label: String = ""
+    val name: String = ""
 )
