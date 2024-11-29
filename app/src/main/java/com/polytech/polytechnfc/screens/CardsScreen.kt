@@ -44,12 +44,13 @@ fun CardsScreen(
     ) {
         // Titre
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(16.dp),
         ){
             Text(
                 text = "Liste des badges",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.titleLarge
             )
         }
 
@@ -58,17 +59,12 @@ fun CardsScreen(
             modifier = Modifier.weight(1f),
         ) {
             items(badgeInfos) { badgeInfo ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Text(
-                        text = "Nom: ${badgeInfo.name}, UID: ${badgeInfo.uid}",
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.bodyLarge
+                CustomListItemComponent(
+                    title = badgeInfo.name,
+                    dynamicContent = listOf(
+                        "UID: ${badgeInfo.uid}"
                     )
-                }
+                )
             }
         }
     }
