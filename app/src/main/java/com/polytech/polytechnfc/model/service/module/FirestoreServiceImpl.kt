@@ -116,11 +116,11 @@ class FirestoreServiceImpl : FirestoreService {
         return try {
             val snapshot = rolesCollection.get().await()
             snapshot.documents.mapNotNull { document ->
-                val name = document.getString("name")
-                if (name != null) {
+                val label = document.getString("label")
+                if (label != null) {
                     Role(
                         id = document.id,
-                        name = name
+                        label = label
                     )
                 } else {
                     Log.w("FirestoreServiceImpl", "Document ignored, missing name: ${document.id}")

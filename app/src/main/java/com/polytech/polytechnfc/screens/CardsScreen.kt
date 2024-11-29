@@ -1,6 +1,7 @@
 package com.polytech.polytechnfc.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.polytech.polytechnfc.ViewModel.CardsViewModel
+import com.polytech.polytechnfc.screens.components.CustomListItemComponent
 import com.polytech.polytechnfc.screens.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -37,23 +39,23 @@ fun CardsScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween, // Espacement entre les sections
     ) {
         // Titre
-        Text(
-            text = "Liste des badges",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .padding(16.dp),
+        ){
+            Text(
+                text = "Liste des badges",
+                style = MaterialTheme.typography.headlineMedium
+            )
+        }
 
         // Liste des badges
         LazyColumn(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(badgeInfos) { badgeInfo ->
                 Card(
@@ -68,16 +70,6 @@ fun CardsScreen(
                     )
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Bouton de retour
-        Button(
-            onClick = { navigator.navigate(HomeScreenDestination) },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Retour")
         }
     }
 }
