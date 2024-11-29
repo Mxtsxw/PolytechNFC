@@ -36,7 +36,11 @@ fun RecordCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RectangleShape
+        shape = RectangleShape,
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White // Set background color to white
+        )
     ) {
         Box(
             modifier = Modifier.fillMaxWidth()

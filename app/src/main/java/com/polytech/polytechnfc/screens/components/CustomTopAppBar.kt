@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 fun CustomTopAppBar(
     title: String,
     onMenuClick: () -> Unit,
-    backgroundColor: Color = Color.Blue,
+    backgroundColor: Color = Color(0xFF1570EF),
     titleColor: Color = Color.White
 ) {
     TopAppBar(

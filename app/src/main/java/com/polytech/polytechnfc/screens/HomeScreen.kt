@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -35,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
@@ -73,7 +75,8 @@ fun HomeScreen(navigator: DestinationsNavigator,
 
     Column(
         modifier = Modifier.fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .background(Color.White),
         verticalArrangement = Arrangement.Center
     )
     {
@@ -111,10 +114,10 @@ fun HomeScreen(navigator: DestinationsNavigator,
             }
         }
 
-        //Section des cartes
-        Box(
+        Column (
             modifier = Modifier
                 .fillMaxWidth()
+                .background(Color(0xFFECECEC))
         )
         {
             Text(
@@ -122,155 +125,173 @@ fun HomeScreen(navigator: DestinationsNavigator,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(16.dp)
             )
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, 0.dp)
+                    .background(Color(0xECECEC)),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // First row with "Salles" and "Cartes"
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // Card Salles
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(RoomsListScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Salles",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+
+                        // Card Cartes
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(CardsScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Cartes",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Second row with "Rôles" and "Lecteurs"
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // Card Rôles
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(RolesScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Rôles",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+
+                        // Card Lecteurs
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(ReadersScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Lecteurs",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Single card for "Créer un accès"
+                item{
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White // Set background color to white
+                        ),
+                        onClick = {
+                            navigator.navigate(AccessCreateScreenDestination())
+                        }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Créer un accès",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                }
+                item{
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+            }
+
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp, 0.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // First row with "Salles" and "Cartes"
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    // Card Salles
-                    Card(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(100.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        onClick = {
-                            navigator.navigate(RoomsListScreenDestination())
-                        }
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "Salles",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-
-                    // Card Cartes
-                    Card(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(100.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        onClick = {
-                            navigator.navigate(CardsScreenDestination())
-                        }
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "Cartes",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Second row with "Rôles" and "Lecteurs"
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    // Card Rôles
-                    Card(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(100.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        onClick = {
-                            navigator.navigate(RolesScreenDestination())
-                        }
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "Rôles",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-
-                    // Card Lecteurs
-                    Card(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(100.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        onClick = {
-                            navigator.navigate(ReadersScreenDestination())
-                        }
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "Lecteurs",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Single card for "Créer un accès"
-            item{
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    onClick = {
-                        navigator.navigate(AccessCreateScreenDestination())
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Créer un accès",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-            item{
-                Spacer(modifier = Modifier.height(32.dp))
-            }
-        }
 //
 //
 //            //Boutton pour se déconnecter
