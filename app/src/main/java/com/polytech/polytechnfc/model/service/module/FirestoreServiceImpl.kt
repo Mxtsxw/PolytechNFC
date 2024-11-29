@@ -11,6 +11,8 @@ import kotlinx.coroutines.tasks.await
 import com.polytech.polytechnfc.model.Record
 import com.polytech.polytechnfc.model.Role
 import com.polytech.polytechnfc.model.Room
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -25,22 +27,28 @@ class FirestoreServiceImpl : FirestoreService {
     private val rolesCollection = firestore.collection("roles")
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun getRecords() : List<Record> {
+    override suspend fun getRecords(): List<Record> {
         return try {
             val snapshot = recordsCollection.get().await()
             Log.d("FirestoreServiceImpl", "Raw snapshot size: ${snapshot.size()}")
             val records = snapshot.documents.mapNotNull { document ->
-                val timestamp = document.getTimestamp("Timestamp")
-                if(timestamp != null) {
-                    val date = timestamp.toDate()
+                val timestamp = document.getTimestamp("timestamp")
+                val uid = document.getString("uid")
+                Log.i("FirestoreServiceImpl", "Timestamp: $timestamp")
+                if (timestamp != null) {
+                    val adjustedTimestamp = Date(timestamp.seconds * 1000 + 60 * 60 * 1000)
                     Record(
                         id = document.id,
-                        //timestamp = timestamp
-                        timestamp = date
+                        uid = uid ?: "",
+                        //timestamp = Date(timestamp.seconds * 1000)
+                        timestamp = adjustedTimestamp
                     )
 
                 } else {
-                    Log.w("FirestoreServiceImpl", "Document ignored, missing timestamp: ${document.id}")
+                    Log.w(
+                        "FirestoreServiceImpl",
+                        "Document ignored, missing timestamp: ${document.id}"
+                    )
                     null
                 }
 
@@ -48,7 +56,7 @@ class FirestoreServiceImpl : FirestoreService {
             // Log des résultats pour vérifier
             Log.d("FirestoreServiceImpl", "Fetched records: $records")
             records
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Log.e("FirestoreServiceImpl", "Error fetching records", e)
             emptyList()
 
@@ -59,9 +67,8 @@ class FirestoreServiceImpl : FirestoreService {
     override suspend fun getBadgeIds(): List<String> {
         return try {
             val snapshot = badgesCollection.get().await()
-            snapshot.documents.mapNotNull { it.id}
-            }
-        catch(e: Exception) {
+            snapshot.documents.mapNotNull { it.id }
+        } catch (e: Exception) {
             Log.e("FirestoreServiceImpl", "Error fetching badge ids", e)
             emptyList()
         }
@@ -72,7 +79,7 @@ class FirestoreServiceImpl : FirestoreService {
             val snapshot = roomsCollection.get().await()
             snapshot.documents.mapNotNull { document ->
                 val name = document.getString("name")
-                if(name != null) {
+                if (name != null) {
                     Room(
                         id = document.id,
                         name = name
@@ -82,7 +89,7 @@ class FirestoreServiceImpl : FirestoreService {
                     null
                 }
             }
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Log.e("FirestoreServiceImpl", "Error fetching rooms", e)
             emptyList()
         }
@@ -93,7 +100,7 @@ class FirestoreServiceImpl : FirestoreService {
             val snapshot = rolesCollection.get().await()
             snapshot.documents.mapNotNull { document ->
                 val name = document.getString("name")
-                if(name != null) {
+                if (name != null) {
                     Role(
                         id = document.id,
                         name = name
@@ -103,9 +110,22 @@ class FirestoreServiceImpl : FirestoreService {
                     null
                 }
             }
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Log.e("FirestoreServiceImpl", "Error fetching roles", e)
             emptyList()
         }
     }
+
+    override suspend fun addAccess(accessData: Map<String, Any>) {
+        withContext(Dispatchers.IO) {
+            try {
+                firestore.collection("accesses").add(accessData).await()
+            } catch (e: Exception) {
+                Log.e("FirestoreServiceImpl", "Error adding access", e)
+            }
+        }
+
+
+}
+
 }

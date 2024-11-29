@@ -9,6 +9,7 @@ interface FirestoreService {
     suspend fun getBadgeIds(): List<String>
     suspend fun getRooms(): List<Room>
     suspend fun getRoles(): List<Role>
+    suspend fun addAccess(accessData: Map<String, Any>)
 }
 
 

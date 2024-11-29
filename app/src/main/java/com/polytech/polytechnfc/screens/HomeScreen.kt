@@ -1,6 +1,7 @@
 package com.polytech.polytechnfc.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.polytech.polytechnfc.ViewModel.RecordsViewModel
 import com.polytech.polytechnfc.ViewModel.SignOutViewModel
 import com.polytech.polytechnfc.screens.Sign_in.SignInScreen
+import com.polytech.polytechnfc.screens.destinations.AccessCreateScreenDestination
 import com.polytech.polytechnfc.screens.destinations.CardsScreenDestination
 import com.polytech.polytechnfc.screens.destinations.ReadersScreenDestination
 import com.polytech.polytechnfc.screens.destinations.RolesScreenDestination
@@ -88,6 +90,8 @@ fun HomeScreen(navigator: DestinationsNavigator,
                     "dd/MM/yyyy HH:mm:ss",
                     Locale.getDefault()
                 ).format(record.timestamp)
+
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(8.dp),
@@ -190,6 +194,7 @@ fun HomeScreen(navigator: DestinationsNavigator,
                     }
                 }
 
+
                 // Card Lecteurs
                 Card(
                     modifier = Modifier.weight(1f).height(100.dp),
@@ -207,6 +212,28 @@ fun HomeScreen(navigator: DestinationsNavigator,
                             text = "Lecteurs",
                             style = MaterialTheme.typography.bodyMedium
                         )
+                    }
+                }
+            }
+
+                //Card pour créer un accès
+                Card(
+                    modifier = Modifier.fillMaxWidth().height(100.dp),
+                    elevation = CardDefaults.cardElevation(8.dp),
+                    onClick = {
+                        navigator.navigate(AccessCreateScreenDestination())
+                    }
+                ){
+                    Column (
+                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        Text(
+                            text = "Créer un accès",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
                     }
                 }
 
@@ -228,5 +255,4 @@ fun HomeScreen(navigator: DestinationsNavigator,
 
         }
     }
-}
 
