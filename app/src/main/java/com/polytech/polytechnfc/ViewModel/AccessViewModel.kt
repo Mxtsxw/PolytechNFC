@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.polytech.polytechnfc.model.Role
 import com.polytech.polytechnfc.model.Room
 import com.polytech.polytechnfc.model.service.FirestoreService
 import com.polytech.polytechnfc.model.service.FirestoreServiceImpl
@@ -31,15 +32,18 @@ class AccessViewModel(
     var endTime by mutableStateOf(LocalTime.of(18,0))
 
     var rooms by mutableStateOf<List<Room>>(emptyList())
+    var roles by mutableStateOf<List<Role>>(emptyList())
 
     init {
         viewModelScope.launch {
             try{
             rooms = firestoreService.getRooms()
             Log.d("AccessViewModel", "Rooms retrieved: $rooms")
+            roles = firestoreService.getRoles()
+            Log.d("AccessViewModel", "Roles retrieved: $roles")
             }
             catch(e: Exception){
-                Log.e("AccessViewModel", "Error fetching rooms: ${e.message}")
+                Log.e("AccessViewModel", "Error fetching data: ${e.message}")
             }
         }
     }

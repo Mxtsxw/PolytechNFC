@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.polytech.polytechnfc.ViewModel.AccessViewModel
+import com.polytech.polytechnfc.screens.components.DropdownField
 import com.polytech.polytechnfc.screens.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -65,6 +66,7 @@ fun AccessCreateScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     val rooms = viewModel.rooms
+    val roles = viewModel.roles
     var expanded by remember { mutableStateOf(false) }
 
     Column(
@@ -83,63 +85,19 @@ fun AccessCreateScreen(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            TextField(
-                value = viewModel.role,
-                onValueChange = { viewModel.role = it },
-                label = { Text("Rôle*") },
-                modifier = Modifier.fillMaxWidth()
+            DropdownField(
+                label = "Rôle*",
+                selectedItem = viewModel.role,
+                onItemSelect = { viewModel.role = it },
+                items = roles.map { it.label }
             )
 
-            Log.d("AccessCreateScreen", "Rooms list size: ${rooms.size}")
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = {isExpanded ->
-                    Log.d("AccessCreateScreen", "onExpandedChange triggered: $isExpanded")
-                    expanded = isExpanded },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                OutlinedTextField(
-                    value = viewModel.room,
-                    onValueChange = { viewModel.room = it },
-                    label = { Text("Salle*") },
-                    readOnly = true,
-                    modifier = Modifier.fillMaxWidth().menuAnchor(),
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowDropDown,
-                            contentDescription = null,
-                            modifier = Modifier.padding(8.dp).clickable { expanded != expanded }
-
-                        )
-                    }
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    if (rooms.isNotEmpty()) {
-                        rooms.forEach { room ->
-                            Log.d("AccessCreateScreen", "Room: ${room.name}")
-                            DropdownMenuItem(
-                                text = { Text(room.name) },
-                                onClick = {
-                                    viewModel.room = room.name
-                                    expanded = false
-                                    Log.d("AccessCreateScreen", "Selected room: ${viewModel.room}")
-                                }
-                            )
-                        }
-
-                    }
-
-                    else {
-                        DropdownMenuItem(
-                            text = { Text("Aucune salle disponible") },
-                            onClick = {}
-                        )
-                    }
-                }
-            }
+            DropdownField(
+                label = "Salle*",
+                selectedItem = viewModel.room,
+                onItemSelect = { viewModel.room = it },
+                items = rooms.map { it.name }
+            )
 
 
 
