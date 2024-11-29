@@ -3,21 +3,17 @@ package com.polytech.polytechnfc.model.service
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.snap
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import com.polytech.polytechnfc.model.BadgeInfo
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import com.polytech.polytechnfc.model.Record
 import com.polytech.polytechnfc.model.Role
 import com.polytech.polytechnfc.model.Room
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Date
+import com.polytech.polytechnfc.model.UserBadge as UserBadge
 
 
 class FirestoreServiceImpl : FirestoreService {
@@ -26,6 +22,7 @@ class FirestoreServiceImpl : FirestoreService {
     private val badgesCollection = firestore.collection("badges")
     private val roomsCollection = firestore.collection("rooms")
     private val rolesCollection = firestore.collection("roles")
+    private val usersCollection = firestore.collection("users")
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getRecords(): List<Record> {
@@ -152,4 +149,58 @@ class FirestoreServiceImpl : FirestoreService {
             emptyList()
         }
     }
+
+    override suspend fun getUsers(): List<UserBadge> {
+        return try {
+            val snapshot = usersCollection.get().await()
+            snapshot.documents.mapNotNull { document ->
+                val email = document.getString("email")
+                val firstname = document.getString("firstname")
+                val lastname = document.getString("lastname")
+                val role = document.getDocumentReference("role")
+                val badge = document.getDocumentReference("badge")
+
+            if(email != null && firstname != null && lastname != null){
+                val roleData = role?.let { fetchRole(it) }
+                val badgeData = badge?.let { fetchBadge(it) }
+                UserBadge(
+                    id = document.id,
+                    email = email,
+                    firstname = firstname,
+                    lastname = lastname,
+                    role = roleData?.let {Role(id = it.id, label = it.label)},
+                    badge = badgeData?.let { BadgeInfo(id = it.id, name = it.name, uid = it.uid) }
+                )
+            } else {
+                Log.w("FirestoreServiceImpl", "Document ignored, missing email, firstname, lastname, role or badge: ${document.id}")
+                null
+            }
+        }
+        }
+        catch (e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching users", e)
+            emptyList()
+        }
+    }
+
+    private suspend fun fetchRole(roleRef: DocumentReference): Role? {
+        return try {
+            val snapshot = roleRef.get().await()
+            snapshot.toObject(Role::class.java)?.copy(id = snapshot.id)
+        } catch (e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching role: ${roleRef.id}", e)
+            null
+        }
+    }
+
+    private suspend fun fetchBadge(badgeRef: DocumentReference): BadgeInfo? {
+        return try {
+            val snapshot = badgeRef.get().await()
+            snapshot.toObject(BadgeInfo::class.java)?.copy(id = snapshot.id)
+        } catch (e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching badge: ${badgeRef.id}", e)
+            null
+        }
+    }
+
 }

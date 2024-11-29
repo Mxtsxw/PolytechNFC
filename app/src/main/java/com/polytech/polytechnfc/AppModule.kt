@@ -14,6 +14,7 @@ import org.koin.dsl.module
 import com.polytech.polytechnfc.ViewModel.RecordsViewModel
 import com.polytech.polytechnfc.ViewModel.RolesViewModel
 import com.polytech.polytechnfc.ViewModel.RoomsListViewModel
+import com.polytech.polytechnfc.ViewModel.UsersViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 val appModule = module {
@@ -27,4 +28,5 @@ val appModule = module {
     viewModel { RolesViewModel(get()) }
     viewModel { AccessViewModel(get()) }
     viewModel { ReadersViewModel(get()) }
+    viewModel { UsersViewModel(get()) }
 }
