@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.snap
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.polytech.polytechnfc.model.BadgeInfo
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import com.polytech.polytechnfc.model.Record
@@ -64,10 +65,24 @@ class FirestoreServiceImpl : FirestoreService {
 
     }
 
-    override suspend fun getBadgeIds(): List<String> {
+    override suspend fun getBadgeInfos(): List<BadgeInfo> {
         return try {
             val snapshot = badgesCollection.get().await()
-            snapshot.documents.mapNotNull { it.id }
+            snapshot.documents.mapNotNull {document ->
+                val name = document.getString("name")
+                val uid = document.getString("uid")
+                if(name != null && uid != null){
+                    BadgeInfo(
+                        id = document.id,
+                        name = name,
+                        uid = uid
+                    )
+                } else {
+                    Log.w("FirestoreServiceImpl", "Document ignored, missing name or uid: ${document.id}")
+                    null
+                }
+
+            }
         } catch (e: Exception) {
             Log.e("FirestoreServiceImpl", "Error fetching badge ids", e)
             emptyList()

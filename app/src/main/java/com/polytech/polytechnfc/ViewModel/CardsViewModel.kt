@@ -2,6 +2,7 @@ package com.polytech.polytechnfc.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.polytech.polytechnfc.model.BadgeInfo
 import com.polytech.polytechnfc.model.service.FirestoreService
 import com.polytech.polytechnfc.model.service.FirestoreServiceImpl
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,17 +13,17 @@ class CardsViewModel(
     private val firestoreService: FirestoreServiceImpl
 ) : ViewModel() {
 
-    private val _badgeIdsState = MutableStateFlow<List<String>>(emptyList())
-    val badgeIdsState: StateFlow<List<String>> = _badgeIdsState
+    private val _badgeInfosState = MutableStateFlow<List<BadgeInfo>>(emptyList())
+    val badgeInfosState: StateFlow<List<BadgeInfo>> = _badgeInfosState
 
     init {
-        fetchBadgeIds()
+        fetchBadgeInfos()
     }
 
-    private fun fetchBadgeIds() {
+    private fun fetchBadgeInfos() {
         viewModelScope.launch {
-            val badgeIds = firestoreService.getBadgeIds()
-            _badgeIdsState.value = badgeIds
+            val badgeInfos = firestoreService.getBadgeInfos()
+            _badgeInfosState.value = badgeInfos
         }
     }
 }

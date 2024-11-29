@@ -33,13 +33,13 @@ fun CardsScreen(
     navigator: DestinationsNavigator,
     viewModel: CardsViewModel = koinViewModel()
 ) {
-    val badgeIds by viewModel.badgeIdsState.collectAsState(emptyList())
+    val badgeInfos by viewModel.badgeInfosState.collectAsState(emptyList())
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween, // Espacement entre les sections
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Titre
@@ -55,14 +55,14 @@ fun CardsScreen(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(badgeIds) { badgeId ->
+            items(badgeInfos) { badgeInfo ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(8.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text(
-                        text = "Badge ID : $badgeId",
+                        text = "Nom: ${badgeInfo.name}, UID: ${badgeInfo.uid}",
                         modifier = Modifier.padding(16.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
