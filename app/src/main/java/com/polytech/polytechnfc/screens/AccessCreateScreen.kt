@@ -6,13 +6,16 @@ import android.app.TimePickerDialog
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
@@ -87,18 +90,12 @@ fun AccessCreateScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-//            TextField(
-//                value = viewModel.room,
-//                onValueChange = { viewModel.room = it },
-//                label = { Text("Salle*") },
-//                modifier = Modifier.fillMaxWidth()
-//            )
             Log.d("AccessCreateScreen", "Rooms list size: ${rooms.size}")
             ExposedDropdownMenuBox(
                 expanded = expanded,
-                onExpandedChange = {
-                    Log.d("AccessCreateScreen", "onExpandedChange triggered: $it")
-                    expanded = it },
+                onExpandedChange = {isExpanded ->
+                    Log.d("AccessCreateScreen", "onExpandedChange triggered: $isExpanded")
+                    expanded = isExpanded },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
@@ -106,11 +103,13 @@ fun AccessCreateScreen(
                     onValueChange = { viewModel.room = it },
                     label = { Text("Salle*") },
                     readOnly = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Filled.ArrowDropDown,
-                            contentDescription = null
+                            contentDescription = null,
+                            modifier = Modifier.padding(8.dp).clickable { expanded != expanded }
+
                         )
                     }
                 )
@@ -125,13 +124,14 @@ fun AccessCreateScreen(
                                 text = { Text(room.name) },
                                 onClick = {
                                     viewModel.room = room.name
-                                    Log.d("AccessCreateScreen", "Selected room: ${viewModel.room}")
                                     expanded = false
+                                    Log.d("AccessCreateScreen", "Selected room: ${viewModel.room}")
                                 }
                             )
                         }
 
                     }
+
                     else {
                         DropdownMenuItem(
                             text = { Text("Aucune salle disponible") },
@@ -142,13 +142,14 @@ fun AccessCreateScreen(
             }
 
 
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 DatePickerField(
                     label = "Date de début",
-                    selectedDate = viewModel.startDate, // Ici on passe `startDate` du viewModel
+                    selectedDate = viewModel.startDate,
                     onDateChange = { viewModel.startDate = it }
                 )
 
