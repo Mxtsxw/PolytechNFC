@@ -35,6 +35,7 @@ class FirestoreServiceImpl : FirestoreService {
             val records = snapshot.documents.mapNotNull { document ->
                 val timestamp = document.getTimestamp("timestamp")
                 val uid = document.getString("uid")
+                val granted = document.getBoolean("granted")
                 Log.i("FirestoreServiceImpl", "Timestamp: $timestamp")
                 if (timestamp != null) {
                     val adjustedTimestamp = Date(timestamp.seconds * 1000 + 60 * 60 * 1000)
@@ -42,7 +43,8 @@ class FirestoreServiceImpl : FirestoreService {
                         id = document.id,
                         uid = uid ?: "",
                         //timestamp = Date(timestamp.seconds * 1000)
-                        timestamp = adjustedTimestamp
+                        timestamp = adjustedTimestamp,
+                        granted = granted ?: false,
                     )
 
                 } else {
