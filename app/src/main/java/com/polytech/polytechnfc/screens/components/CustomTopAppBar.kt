@@ -1,6 +1,7 @@
 package com.polytech.polytechnfc.screens.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,6 +27,17 @@ fun CustomTopAppBar(
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = "Menu Icon",
+                    tint = Color.White
+                )
+            }
+        },
+        actions = {
+            // Add the logout icon button
+            IconButton(onClick = {
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,  // Logout icon
+                    contentDescription = "Logout Icon",
                     tint = Color.White
                 )
             }
