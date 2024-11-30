@@ -280,7 +280,7 @@ fun HomeScreen(navigator: DestinationsNavigator,
                             .height(100.dp),
                         elevation = CardDefaults.cardElevation(8.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White // Set background color to white
+                            containerColor = Color(0xFF1570EF) // Set background color to white
                         ),
                         onClick = {
                             navigator.navigate(AccessCreateScreenDestination())

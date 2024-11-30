@@ -13,6 +13,7 @@ interface FirestoreService {
     suspend fun getRoles(): List<Role>
     suspend fun addAccess(accessData: Map<String, Any>)
     suspend fun getUsers(): List<UserBadge>
+    suspend fun updateUser(user: UserBadge)
 }
 
 

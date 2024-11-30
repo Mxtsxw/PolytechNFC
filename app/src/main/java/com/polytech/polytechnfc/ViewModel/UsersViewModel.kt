@@ -1,5 +1,6 @@
 package com.polytech.polytechnfc.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,6 +25,21 @@ class UsersViewModel(
         viewModelScope.launch {
             val users = firestoreService.getUsers()
             _usersState.value = users
+        }
+    }
+
+    fun updateUser(user: UserBadge){
+        viewModelScope.launch {
+            try{
+                firestoreService.updateUser(user)
+                val updateUsers = usersState.value.map{
+                    if (it.id == user.id) user else it
+                }
+                _usersState.value = updateUsers
+            }
+            catch(e: Exception){
+                Log.e("UsersViewModel", "Error updating user: ${e.message}")
+            }
         }
     }
 

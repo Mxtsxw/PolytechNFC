@@ -11,6 +11,7 @@ import com.polytech.polytechnfc.model.Record
 import com.polytech.polytechnfc.model.Role
 import com.polytech.polytechnfc.model.Room
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import java.util.Date
 import com.polytech.polytechnfc.model.UserBadge as UserBadge
@@ -203,4 +204,45 @@ class FirestoreServiceImpl : FirestoreService {
         }
     }
 
+    override suspend fun updateUser(user: UserBadge) {
+        withContext(Dispatchers.IO) {
+            try {
+                val userData = mutableMapOf<String, Any>()
+
+                //Ajout uniquemenet des champs modifiés
+                user.firstname?.let { userData["firstname"] = it }
+                user.lastname?.let { userData["lastname"] = it }
+
+                // Vérifie si un nouveau rôle est sélectionné
+                user.role?.id?.takeIf { it.isNotBlank() }?.let { roleId ->
+                    val roleRef = rolesCollection.document(roleId) // Référence au nouveau rôle
+                    userData["role"] = roleRef // Ajoute la référence au map
+                    Log.d("FirestoreServiceImpl", "Role updated with reference: ${roleRef.path}")
+                }
+
+                // Vérifie si un nouveau badge est sélectionné
+                user.badge?.id?.takeIf { it.isNotBlank() }?.let { badgeId ->
+                    val badgeRef = badgesCollection.document(badgeId)
+                    userData["badge"] = badgeRef
+                    Log.d("FirestoreServiceImpl", "Badge updated with reference: ${badgeRef.path}")
+                }
+
+                //Mise à jour
+                if (userData.isNotEmpty()) {
+                    usersCollection.document(user.id).update(userData).await()
+                    Log.d("FirestoreServiceImpl", "User ${user.id} updated successfully")
+                } else {
+                    Log.d("FirestoreServiceImpl", "No fields to update for user ${user.id}")
+                }
+
+
+
+
+
+            } catch (e: Exception) {
+                Log.e("FirestoreServiceImpl", "Error updating user: ${user.id}", e)
+            }
+        }
+
+    }
 }
