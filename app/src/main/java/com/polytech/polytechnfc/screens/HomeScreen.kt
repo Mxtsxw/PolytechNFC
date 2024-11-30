@@ -1,7 +1,6 @@
 package com.polytech.polytechnfc.screens
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,20 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,29 +25,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.google.firebase.firestore.QuerySnapshot
 import com.polytech.polytechnfc.ViewModel.RecordsViewModel
 import com.polytech.polytechnfc.ViewModel.SignOutViewModel
-import com.polytech.polytechnfc.screens.Sign_in.SignInScreen
 import com.polytech.polytechnfc.screens.components.RecordCard
 import com.polytech.polytechnfc.screens.destinations.AccessCreateScreenDestination
 import com.polytech.polytechnfc.screens.destinations.CardsScreenDestination
 import com.polytech.polytechnfc.screens.destinations.ReadersScreenDestination
 import com.polytech.polytechnfc.screens.destinations.RolesScreenDestination
 import com.polytech.polytechnfc.screens.destinations.RoomsListScreenDestination
-import com.polytech.polytechnfc.screens.destinations.SignInScreenDestination
+import com.polytech.polytechnfc.screens.destinations.UsersScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Locale
-import java.util.TimeZone
-
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -255,7 +238,39 @@ fun HomeScreen(navigator: DestinationsNavigator,
                             }
                         }
                     }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        //Card Utilisateurs
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(UsersScreenDestination())
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Utilisateurs",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                    }
                 }
+
 
                 // Single card for "Créer un accès"
                 item{
@@ -265,7 +280,7 @@ fun HomeScreen(navigator: DestinationsNavigator,
                             .height(100.dp),
                         elevation = CardDefaults.cardElevation(8.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White // Set background color to white
+                            containerColor = Color(0xFF1570EF) // Set background color to white
                         ),
                         onClick = {
                             navigator.navigate(AccessCreateScreenDestination())
