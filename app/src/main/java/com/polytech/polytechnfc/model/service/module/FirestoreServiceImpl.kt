@@ -207,6 +207,7 @@ class FirestoreServiceImpl : FirestoreService {
     override suspend fun updateUser(user: UserBadge) {
         withContext(Dispatchers.IO) {
             try {
+                // Map des données à mettre à jour
                 val userData = mutableMapOf<String, Any>()
 
                 //Ajout uniquemenet des champs modifiés
