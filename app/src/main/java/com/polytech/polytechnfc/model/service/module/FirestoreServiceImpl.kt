@@ -6,12 +6,12 @@ import androidx.annotation.RequiresApi
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.polytech.polytechnfc.model.BadgeInfo
+import com.polytech.polytechnfc.model.Reader
 import kotlinx.coroutines.tasks.await
 import com.polytech.polytechnfc.model.Record
 import com.polytech.polytechnfc.model.Role
 import com.polytech.polytechnfc.model.Room
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import java.util.Date
 import com.polytech.polytechnfc.model.UserBadge as UserBadge
@@ -36,12 +36,10 @@ class FirestoreServiceImpl : FirestoreService {
                 val granted = document.getBoolean("granted")
                 Log.i("FirestoreServiceImpl", "Timestamp: $timestamp")
                 if (timestamp != null) {
-                    val adjustedTimestamp = Date(timestamp.seconds * 1000 + 60 * 60 * 1000)
                     Record(
                         id = document.id,
                         uid = uid ?: "",
-                        //timestamp = Date(timestamp.seconds * 1000)
-                        timestamp = adjustedTimestamp,
+                        timestamp = Date(timestamp.seconds * 1000),
                         granted = granted ?: false,
                     )
 
@@ -94,10 +92,12 @@ class FirestoreServiceImpl : FirestoreService {
             val snapshot = roomsCollection.get().await()
             snapshot.documents.mapNotNull { document ->
                 val name = document.getString("name")
+                val reader = document.getDocumentReference("reader")
                 if (name != null) {
                     Room(
                         id = document.id,
-                        name = name
+                        name = name,
+                        reader = reader?.let { fetchReader(it) }
                     )
                 } else {
                     Log.w("FirestoreServiceImpl", "Document ignored, missing name: ${document.id}")
@@ -141,12 +141,25 @@ class FirestoreServiceImpl : FirestoreService {
         }
     }
 
-    suspend fun getReaderIds(): List<String> {
+    suspend fun getReaders(): List<Reader> {
         return try {
             val snapshot = firestore.collection("readers").get().await()
-            snapshot.documents.mapNotNull { it.id }
+            snapshot.documents.mapNotNull { document ->
+                val name = document.getString("name")
+                val room = document.getDocumentReference("room")
+                if (name != null) {
+                    Reader(
+                        id = document.id,
+                        name = name,
+                        room = room?.let { fetchRoom(it) }
+                    )
+                } else {
+                    Log.w("FirestoreServiceImpl", "Document ignored, missing name: ${document.id}")
+                    null
+                }
+            }
         } catch (e: Exception) {
-            Log.e("FirestoreServiceImpl", "Error fetching reader ids", e)
+            Log.e("FirestoreServiceImpl", "Error fetching readers", e)
             emptyList()
         }
     }
@@ -184,6 +197,9 @@ class FirestoreServiceImpl : FirestoreService {
         }
     }
 
+    /**
+     * Fetch a role from a document reference
+     */
     private suspend fun fetchRole(roleRef: DocumentReference): Role? {
         return try {
             val snapshot = roleRef.get().await()
@@ -194,12 +210,41 @@ class FirestoreServiceImpl : FirestoreService {
         }
     }
 
+    /**
+     * Fetch a badge from a document reference
+     */
     private suspend fun fetchBadge(badgeRef: DocumentReference): BadgeInfo? {
         return try {
             val snapshot = badgeRef.get().await()
             snapshot.toObject(BadgeInfo::class.java)?.copy(id = snapshot.id)
         } catch (e: Exception) {
             Log.e("FirestoreServiceImpl", "Error fetching badge: ${badgeRef.id}", e)
+            null
+        }
+    }
+
+    /**
+     * Fetch a reader from a document reference
+     */
+    private suspend fun fetchReader(readerRef: DocumentReference): Reader? {
+        return try {
+            val snapshot = readerRef.get().await()
+            snapshot.toObject(Reader::class.java)?.copy(id = snapshot.id)
+        } catch (e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching reader: ${readerRef.id}", e)
+            null
+        }
+    }
+
+    /**
+     * Fetch a room from a document reference
+     */
+    private suspend fun fetchRoom(roomRef: DocumentReference): Room? {
+        return try {
+            val snapshot = roomRef.get().await()
+            snapshot.toObject(Room::class.java)?.copy(id = snapshot.id)
+        } catch (e: Exception) {
+            Log.e("FirestoreServiceImpl", "Error fetching room: ${roomRef.id}", e)
             null
         }
     }
