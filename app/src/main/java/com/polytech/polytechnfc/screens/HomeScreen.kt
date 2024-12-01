@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +37,7 @@ import com.polytech.polytechnfc.screens.destinations.CardsScreenDestination
 import com.polytech.polytechnfc.screens.destinations.ReadersScreenDestination
 import com.polytech.polytechnfc.screens.destinations.RolesScreenDestination
 import com.polytech.polytechnfc.screens.destinations.RoomsListScreenDestination
+import com.polytech.polytechnfc.screens.destinations.SignInScreenDestination
 import com.polytech.polytechnfc.screens.destinations.UsersScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -301,27 +303,38 @@ fun HomeScreen(navigator: DestinationsNavigator,
                     }
 
                 }
+                item{
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Button(
+                            onClick = {
+                                viewModel.signOut()
+                                navigator.navigate(SignInScreenDestination())
+                            }
+                        ) {
+                            Text("Se déconnecter")
+                        }
+                    }
+
+                }
 
                 item{
                     Spacer(modifier = Modifier.height(32.dp))
                 }
             }
 
+
+
         }
 
-//
-//
-//            //Boutton pour se déconnecter
-//            Button(
-//                onClick = {
-//                    viewModel.signOut()
-//                    navigator.navigate(SignInScreenDestination())
-//                },
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//            {
-//                Text("Se déconnecter")
-//            }
+
+
+
+
 
         }
     }
