@@ -91,9 +91,9 @@ fun HomeScreen(navigator: DestinationsNavigator,
                 ).format(record.timestamp)
 
                 RecordCard(
-                    user = "Inconnu",
+                    user = record.uid,
                     timestamp = formattedDate,
-                    room = "record.room",
+                    room = "",
                     granted = record.granted
                 )
             }
