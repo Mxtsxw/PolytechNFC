@@ -238,6 +238,9 @@ fun HomeScreen(navigator: DestinationsNavigator,
                             }
                         }
                     }
+                }
+
+                item{
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -268,38 +271,37 @@ fun HomeScreen(navigator: DestinationsNavigator,
                                 )
                             }
                         }
-                    }
-                }
 
-
-                // Single card for "Créer un accès"
-                item{
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFF1570EF) // Set background color to white
-                        ),
-                        onClick = {
-                            navigator.navigate(AccessCreateScreenDestination())
-                        }
-                    ) {
-                        Column(
+                        Card(
                             modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                .weight(1f)
+                                .height(100.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF1570EF) // Set background color to white
+                            ),
+                            onClick = {
+                                navigator.navigate(AccessCreateScreenDestination())
+                            }
                         ) {
-                            Text(
-                                text = "Créer un accès",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Créer un accès",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
+
                     }
+
                 }
+
                 item{
                     Spacer(modifier = Modifier.height(32.dp))
                 }
