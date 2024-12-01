@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.polytech.polytechnfc.model.Role
 import com.polytech.polytechnfc.model.Room
@@ -65,11 +66,20 @@ class AccessViewModel(
                 }
                 val roleRef = firestore.collection("roles").document(selectedRole.id)
                 val roomRef = firestore.collection("rooms").document(selectedRoom.id)
+
+                // Convert LocalDateTime to Instant and then to Firebase Timestamp
+                val startInstant = LocalDateTime.of(startDate, startTime)
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                val endInstant = LocalDateTime.of(endDate, endTime)
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+
                 val accessData = mapOf(
                     "role" to roleRef,
                     "room" to roomRef,
-                    "start" to LocalDateTime.of(startDate, startTime).atZone(ZoneId.systemDefault()).toString(),
-                    "end" to LocalDateTime.of(endDate, endTime).atZone(ZoneId.systemDefault()).toString()
+                    "start" to Timestamp(startInstant),
+                    "end" to Timestamp(endInstant)
                 )
 
                 firestoreService.addAccess(accessData)
