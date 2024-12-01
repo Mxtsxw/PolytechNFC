@@ -198,7 +198,7 @@ fun AccessCreateScreen(
                         Text("Annuler")
                     }
                 },
-                title = { Text("Vérification des données") },
+                title = { Text("Créer l'accès") },
                 text = {
                     Column {
                         Text("Rôle : ${viewModel.role}")
