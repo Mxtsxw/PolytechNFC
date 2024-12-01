@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.polytech.polytechnfc.model.BadgeInfo
 import com.polytech.polytechnfc.model.Reader
 import kotlinx.coroutines.tasks.await
@@ -19,7 +20,7 @@ import com.polytech.polytechnfc.model.UserBadge as UserBadge
 
 class FirestoreServiceImpl : FirestoreService {
     private val firestore = FirebaseFirestore.getInstance()
-    private val recordsCollection = firestore.collection("records")
+    val recordsCollection = firestore.collection("records")
     private val badgesCollection = firestore.collection("badges")
     private val roomsCollection = firestore.collection("rooms")
     private val rolesCollection = firestore.collection("roles")
@@ -28,7 +29,10 @@ class FirestoreServiceImpl : FirestoreService {
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getRecords(): List<Record> {
         return try {
-            val snapshot = recordsCollection.get().await()
+            val snapshot = recordsCollection
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .await()
             Log.d("FirestoreServiceImpl", "Raw snapshot size: ${snapshot.size()}")
             val records = snapshot.documents.mapNotNull { document ->
                 val timestamp = document.getTimestamp("timestamp")
