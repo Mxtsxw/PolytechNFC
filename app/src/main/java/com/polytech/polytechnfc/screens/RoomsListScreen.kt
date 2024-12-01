@@ -63,6 +63,11 @@ fun RoomsListScreen(navigator: DestinationsNavigator,
                     title = room.name,
                     icon = Icons.Default.Info,
                     onThreeDotsClick = {},
+                    dynamicContent = if (room.reader != null) {
+                        listOf("Lecteur : ${room.reader.name}")
+                    } else {
+                        listOf()
+                    },
                 )
             }
         }
