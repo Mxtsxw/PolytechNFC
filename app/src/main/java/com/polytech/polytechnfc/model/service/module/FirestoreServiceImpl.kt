@@ -12,7 +12,6 @@ import com.polytech.polytechnfc.model.Record
 import com.polytech.polytechnfc.model.Role
 import com.polytech.polytechnfc.model.Room
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import java.util.Date
 import com.polytech.polytechnfc.model.UserBadge as UserBadge
@@ -144,12 +143,25 @@ class FirestoreServiceImpl : FirestoreService {
         }
     }
 
-    suspend fun getReaderIds(): List<String> {
+    suspend fun getReaders(): List<Reader> {
         return try {
             val snapshot = firestore.collection("readers").get().await()
-            snapshot.documents.mapNotNull { it.id }
+            snapshot.documents.mapNotNull { document ->
+                val name = document.getString("name")
+                val room = document.getDocumentReference("room")
+                if (name != null) {
+                    Reader(
+                        id = document.id,
+                        name = name,
+                        room = room?.let { fetchRoom(it) }
+                    )
+                } else {
+                    Log.w("FirestoreServiceImpl", "Document ignored, missing name: ${document.id}")
+                    null
+                }
+            }
         } catch (e: Exception) {
-            Log.e("FirestoreServiceImpl", "Error fetching reader ids", e)
+            Log.e("FirestoreServiceImpl", "Error fetching readers", e)
             emptyList()
         }
     }

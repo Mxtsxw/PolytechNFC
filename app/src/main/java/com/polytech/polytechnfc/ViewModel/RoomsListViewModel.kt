@@ -10,20 +10,20 @@ import kotlinx.coroutines.launch
 
 class RoomsListViewModel(
     private val firestoreService: FirestoreServiceImpl
-) : ViewModel(){
+) : ViewModel() {
 
-        private val _roomsState = MutableStateFlow<List<Room>>(emptyList())
-        val roomsState: StateFlow<List<Room>> = _roomsState
+    private val _roomsState = MutableStateFlow<List<Room>>(emptyList())
+    val roomsState: StateFlow<List<Room>> = _roomsState
 
-        init {
-            fetchRooms()
+    init {
+        fetchRooms()
+    }
+
+    private fun fetchRooms() {
+        viewModelScope.launch {
+            val rooms = firestoreService.getRooms()
+            _roomsState.value = rooms
         }
-
-        private fun fetchRooms(){
-            viewModelScope.launch {
-                val rooms = firestoreService.getRooms()
-                _roomsState.value = rooms
-            }
-        }
+    }
 
 }

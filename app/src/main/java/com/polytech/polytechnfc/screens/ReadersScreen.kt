@@ -42,7 +42,7 @@ fun ReadersScreen(
     navigator: DestinationsNavigator,
     viewModel: ReadersViewModel = koinViewModel()
 ) {
-    val readerIds by viewModel.readerIdsState.collectAsState(emptyList())
+    val readers by viewModel.readersState.collectAsState(emptyList())
 
     Column(
         modifier = Modifier
@@ -64,9 +64,14 @@ fun ReadersScreen(
         LazyColumn(
             modifier = Modifier.weight(1f),
         ) {
-            items(readerIds) { readerId ->
+            items(readers) { reader ->
                 CustomListItemComponent(
-                    title = "Lecteur NFC $readerId",
+                    title = "Lecteur NFC ${reader.name}",
+                    dynamicContent = if (reader.room != null) {
+                        listOf("Salle : ${reader.room.name}")
+                    } else {
+                        listOf()
+                    },
                 )
             }
         }
