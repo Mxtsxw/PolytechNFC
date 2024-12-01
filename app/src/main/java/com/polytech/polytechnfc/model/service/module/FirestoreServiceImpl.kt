@@ -36,12 +36,10 @@ class FirestoreServiceImpl : FirestoreService {
                 val granted = document.getBoolean("granted")
                 Log.i("FirestoreServiceImpl", "Timestamp: $timestamp")
                 if (timestamp != null) {
-                    val adjustedTimestamp = Date(timestamp.seconds * 1000 + 60 * 60 * 1000)
                     Record(
                         id = document.id,
                         uid = uid ?: "",
-                        //timestamp = Date(timestamp.seconds * 1000)
-                        timestamp = adjustedTimestamp,
+                        timestamp = Date(timestamp.seconds * 1000),
                         granted = granted ?: false,
                     )
 

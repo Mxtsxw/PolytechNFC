@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AccessViewModel(
@@ -52,17 +53,10 @@ class AccessViewModel(
         viewModelScope.launch{
             try{
                 val accessData = mapOf(
-                    "id" to role,
-                    "name" to role,
-                    "permissions" to listOf(
-                        mapOf(
-                            "roomid" to room,
-                            "access_time" to mapOf(
-                                "start" to LocalDateTime.of(startDate, startTime).toString(),
-                                "end" to LocalDateTime.of(endDate, endTime).toString()
-                            )
-                        )
-                    )
+                    "role" to role,
+                    "room" to room,
+                    "start" to LocalDateTime.of(startDate, startTime).atZone(ZoneId.systemDefault()).toString(),
+                    "end" to LocalDateTime.of(endDate, endTime).atZone(ZoneId.systemDefault()).toString()
                 )
                 firestoreService.addAccess(accessData)
                 onSuccess()
